@@ -6,6 +6,7 @@ import {
 } from "@aragon/osx-ethers";
 import { Provider } from "@ethersproject/providers";
 import { Signer } from "ethers";
+import { ethers } from "hardhat";
 
 type ContractAddresses = typeof activeContractsList;
 
@@ -15,6 +16,8 @@ interface NewPluginRepoParams {
   deployer: string;
   networkName: string;
   signer: Signer | Provider;
+  buildMetadataCid?: string;
+  releaseMetadataCid?: string;
 }
 
 export async function newPluginRepo({
@@ -23,6 +26,8 @@ export async function newPluginRepo({
   deployer,
   networkName,
   signer,
+  buildMetadataCid = "",
+  releaseMetadataCid = "",
 }: NewPluginRepoParams) {
   const repoFactory = PluginRepoFactory__factory.connect(
     activeContractsList[networkName as keyof ContractAddresses]
@@ -55,8 +60,8 @@ export async function newPluginRepo({
     subdomain,
     setupAddress,
     deployer,
-    "0x00",
-    "0x00"
+    ethers.utils.toUtf8Bytes(buildMetadataCid),
+    ethers.utils.toUtf8Bytes(releaseMetadataCid)
   );
 
   await eventPromise;

@@ -1,9 +1,9 @@
-import HRE from 'hardhat';
 import fs from 'fs';
+import HRE from 'hardhat';
+//import path from 'path';
 import {file} from 'tmp-promise';
-import path from 'path';
 
-function delay(ms: number) {
+export function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -11,9 +11,9 @@ export const verifyContract = async (
   address: string,
   constructorArguments: any[]
 ) => {
-  const currentNetwork = HRE.network.name;
+  /*const currentNetwork = HRE.network.name;
 
-  const networks = await fs.promises.readFile(
+ const networks = await fs.promises.readFile(
     path.join(__dirname, '../networks.json'),
     'utf8'
   );
@@ -24,10 +24,10 @@ export const verifyContract = async (
         networksJSON
       ).join(',')}`
     );
-  }
+  }*/
 
   try {
-    const msDelay = 500; // minimum dely between tasks
+    const msDelay = 500; // minimum delay between tasks
     const times = 2; // number of retries
 
     // Write a temporal file to host complex parameters for hardhat-etherscan https://github.com/nomiclabs/hardhat/tree/master/packages/hardhat-etherscan#complex-arguments

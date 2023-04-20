@@ -19,9 +19,8 @@ import {MajorityVotingBase} from "@aragon/osx/plugins/governance/majority-voting
 import {IFollowNFT} from "./interfaces/IFollowNFT.sol";
 import {LensVotingPlugin} from "./LensVotingPlugin.sol";
 
-
 /// @title LensVotingSetup
-/// @author DAO BOX
+/// @author DAO Box (@pythonpete32)
 /// @notice The setup contract of the `LensVotingPlugin` contract.
 contract LensVotingSetup is PluginSetup {
     using Address for address;
@@ -30,7 +29,6 @@ contract LensVotingSetup is PluginSetup {
 
     /// @notice The address of the `LensVotingPlugin` base contract.
     LensVotingPlugin private immutable lensVotingBase;
-
 
     /// @notice Thrown if token address is passed which is not a token.
     /// @param token The token address
@@ -56,14 +54,18 @@ contract LensVotingSetup is PluginSetup {
     ) external returns (address plugin, PreparedSetupData memory preparedSetupData) {
         // Decode `_data` to extract the params needed for deploying and initializing `LensVotingPlugin` plugin,
         // and the required helpers
-        (MajorityVotingBase.VotingSettings memory votingSettings,IFollowNFT votingToken) = abi.decode(
-            _data, (MajorityVotingBase.VotingSettings, IFollowNFT));
-
+        (MajorityVotingBase.VotingSettings memory votingSettings, IFollowNFT votingToken) = abi
+            .decode(_data, (MajorityVotingBase.VotingSettings, IFollowNFT));
 
         // Prepare and deploy plugin proxy.
         plugin = createERC1967Proxy(
             address(lensVotingBase),
-            abi.encodeWithSelector(LensVotingPlugin.initialize.selector, _dao, votingSettings, votingToken)
+            abi.encodeWithSelector(
+                LensVotingPlugin.initialize.selector,
+                _dao,
+                votingSettings,
+                votingToken
+            )
         );
 
         // Prepare permissions
@@ -96,8 +98,6 @@ contract LensVotingSetup is PluginSetup {
             PermissionLib.NO_CONDITION,
             DAO(payable(_dao)).EXECUTE_PERMISSION_ID()
         );
-
-
 
         preparedSetupData.permissions = permissions;
     }
@@ -147,7 +147,6 @@ contract LensVotingSetup is PluginSetup {
             PermissionLib.NO_CONDITION,
             DAO(payable(_dao)).EXECUTE_PERMISSION_ID()
         );
-
     }
 
     /// @inheritdoc IPluginSetup
@@ -164,8 +163,7 @@ contract LensVotingSetup is PluginSetup {
         return token.getSupportedInterfaces(interfaceIds);
     }
 
-
-        function _isIFollowNFT(address token) private view returns (bool) {
+    function _isIFollowNFT(address token) private view returns (bool) {
         // We can use any function selector from the IFollowNFT interface
         (bool success, bytes memory data) = token.staticcall(
             abi.encodeWithSelector(IFollowNFT.getPowerByBlockNumber.selector, address(this), 0)

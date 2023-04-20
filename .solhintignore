@@ -1,1 +1,4 @@
-node_modules
+# directories
+**/artifacts
+**/node_modules
+contracts/release1/build1/CentralizedArbitrator.sol

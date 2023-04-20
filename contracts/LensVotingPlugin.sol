@@ -12,7 +12,7 @@ import {IDAO} from "@aragon/osx/core/dao/IDAO.sol";
 import {RATIO_BASE, _applyRatioCeiled} from "./utils/Ratio.sol";
 
 /// @title TokenVoting
-/// @author Aragon Association - 2021-2023
+/// @author DAO Box (@pythonpete32)
 /// @notice The majority voting implementation using an [OpenZepplin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes) compatible governance token.
 /// @dev This contract inherits from `MajorityVotingBase` and implements the `IMajorityVoting` interface.
 contract LensVotingPlugin is IMembership, MajorityVotingBase {
@@ -88,7 +88,10 @@ contract LensVotingPlugin is IMembership, MajorityVotingBase {
             revert NoVotingPower();
         }
 
-        if (votingToken.getPowerByBlockNumber(_msgSender(), snapshotBlock) < minProposerVotingPower()) {
+        if (
+            votingToken.getPowerByBlockNumber(_msgSender(), snapshotBlock) <
+            minProposerVotingPower()
+        ) {
             revert ProposalCreationForbidden(_msgSender());
         }
 
@@ -149,7 +152,10 @@ contract LensVotingPlugin is IMembership, MajorityVotingBase {
         Proposal storage proposal_ = proposals[_proposalId];
 
         // This could re-enter, though we can assume the governance token is not malicious
-        uint256 votingPower = votingToken.getPowerByBlockNumber(_voter, proposal_.parameters.snapshotBlock);
+        uint256 votingPower = votingToken.getPowerByBlockNumber(
+            _voter,
+            proposal_.parameters.snapshotBlock
+        );
         VoteOption state = proposal_.voters[_voter];
 
         // If voter had previously voted, decrease count

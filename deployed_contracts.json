@@ -1,0 +1,12 @@
+{
+  "hardhat": {
+    "LensVotingSetup": "0xAEd3395DA78c2C7F6C2E7B60188900EEeBe38363"
+  },
+  "polygon": {
+    "PluginRepo": "0x0650EE961514C90D927F302b374d52344E8C62BF",
+    "LensVotingSetup": "0xAEd3395DA78c2C7F6C2E7B60188900EEeBe38363"
+  },
+  "mumbai": {
+    "PluginRepo": "0xD42Aa286DD6c5610FAF4D402B055f35dDb446432"
+  }
+}

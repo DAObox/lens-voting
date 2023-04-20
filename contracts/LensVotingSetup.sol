@@ -30,17 +30,13 @@ contract LensVotingSetup is PluginSetup {
     /// @notice The address of the `LensVotingPlugin` base contract.
     LensVotingPlugin private immutable lensVotingBase;
 
-    /// @notice Thrown if token address is passed which is not a token.
-    /// @param token The token address
-    error TokenNotContract(address token);
-
-    /// @notice Thrown if token address is not ERC20.
-    /// @param token The token address
-    error TokenNotERC20(address token);
-
     /// @notice Thrown if passed helpers array is of worng length.
     /// @param length The array length of passed helpers.
     error WrongHelpersArrayLength(uint256 length);
+
+    /// @notice Thrown if passed token dose not implement have `getPowerByBlockNumber` function.
+    /// @param token The token address.
+    error InvalidFollowNFT(address token);
 
     /// @notice The contract constructor, that deployes the bases.
     constructor() {
@@ -56,6 +52,9 @@ contract LensVotingSetup is PluginSetup {
         // and the required helpers
         (MajorityVotingBase.VotingSettings memory votingSettings, IFollowNFT votingToken) = abi
             .decode(_data, (MajorityVotingBase.VotingSettings, IFollowNFT));
+
+        // Check if the token is a valid Follow NFT.
+        if (!_isIFollowNFT(votingToken)) revert InvalidFollowNFT({token: address(votingToken)});
 
         // Prepare and deploy plugin proxy.
         plugin = createERC1967Proxy(
@@ -113,15 +112,7 @@ contract LensVotingSetup is PluginSetup {
             revert WrongHelpersArrayLength({length: helperLength});
         }
 
-        // token can be either GovernanceERC20, GovernanceWrappedERC20, or IVotesUpgradeable, which
-        // does not follow the GovernanceERC20 and GovernanceWrappedERC20 standard.
-        address token = _payload.currentHelpers[0];
-
-        bool[] memory supportedIds = _getTokenInterfaceIds(token);
-
-        bool isGovernanceERC20 = supportedIds[0] && supportedIds[1] && !supportedIds[2];
-
-        permissions = new PermissionLib.MultiTargetPermission[](isGovernanceERC20 ? 4 : 3);
+        permissions = new PermissionLib.MultiTargetPermission[](3);
 
         // Set permissions to be Revoked.
         permissions[0] = PermissionLib.MultiTargetPermission(
@@ -163,9 +154,9 @@ contract LensVotingSetup is PluginSetup {
         return token.getSupportedInterfaces(interfaceIds);
     }
 
-    function _isIFollowNFT(address token) private view returns (bool) {
+    function _isIFollowNFT(IFollowNFT token) private view returns (bool) {
         // We can use any function selector from the IFollowNFT interface
-        (bool success, bytes memory data) = token.staticcall(
+        (bool success, bytes memory data) = address(token).staticcall(
             abi.encodeWithSelector(IFollowNFT.getPowerByBlockNumber.selector, address(this), 0)
         );
         return success && data.length == 0x20;

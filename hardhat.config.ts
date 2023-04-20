@@ -2,7 +2,7 @@ import {NetworkNameMapping} from './utils/helpers';
 import '@nomicfoundation/hardhat-chai-matchers';
 import '@nomicfoundation/hardhat-toolbox';
 import '@nomiclabs/hardhat-etherscan';
-import '@openzeppelin/hardhat-upgrades';
+// import '@openzeppelin/hardhat-upgrades';
 import '@typechain/hardhat';
 import {config as dotenvConfig} from 'dotenv';
 import {BigNumber} from 'ethers';

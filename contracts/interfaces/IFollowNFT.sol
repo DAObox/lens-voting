@@ -11,6 +11,27 @@ import {DataTypes} from "../lib/DataTypes.sol";
  * @notice This is the interface for the FollowNFT contract, which is cloned upon the first follow for any profile.
  */
 interface IFollowNFT {
+    function balanceOf(address owner) external view returns (uint256 balance);
+
+    function exists(uint256 tokenId) external view returns (bool);
+
+    function name() external view returns (string memory);
+
+    function ownerOf(uint256 tokenId) external view returns (address owner);
+
+    function symbol() external view returns (string memory);
+
+    function tokenByIndex(uint256 index) external view returns (uint256 tokenId);
+
+    function tokenOfOwnerByIndex(
+        address owner,
+        uint256 index
+    ) external view returns (uint256 tokenId);
+
+    function tokenURI(uint256 tokenId) external view returns (string memory);
+
+    function totalSupply() external view returns (uint256);
+
     /**
      * @notice Initializes the follow NFT, setting the hub as the privileged minter and storing the associated profile ID.
      *
@@ -56,7 +77,10 @@ interface IFollowNFT {
      *
      * @return uint256 The power of the given user at the given block number.
      */
-    function getPowerByBlockNumber(address user, uint256 blockNumber) external view returns (uint256);
+    function getPowerByBlockNumber(
+        address user,
+        uint256 blockNumber
+    ) external view returns (uint256);
 
     /**
      * @notice Returns the total delegated supply at a specified block number. This is the sum of all
